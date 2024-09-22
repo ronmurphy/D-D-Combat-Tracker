@@ -1047,7 +1047,6 @@ rollEnemyInitiativeBtn.addEventListener('click', () => {
                 <p>HP: ${character.currentHp}/${character.maxHp} ${character.tempHp > 0 ? `(+${character.tempHp} temp)` : ''}</p>
                 <p>Initiative: ${character.initiative}</p>
                 <p>Conditions: ${character.conditions.join(', ') || 'None'}</p>
-                <p>Stats: ${abilityElements.join(', ') || 'None'}</p>
                 <p>Concentrating: ${character.concentration ? 'Yes' : 'No'}</p>
                 <p>Notes: ${character.notes || 'None'}</p>
             `;
