@@ -761,18 +761,39 @@ function populateMonsterData(monsterName) {
     const monster = compiledBestiary[monsterName];
     console.log('Monster data:', monster);
     if (monster) {
-        document.getElementById('name').value = monsterName;
-        document.getElementById('type').value = 'enemy';
-        document.getElementById('ac').value = monster.ac;
-        document.getElementById('maxHp').value = monster.hp;
-        document.getElementById('currentHp').value = monster.hp;
-        document.getElementById('initiative').value = Math.floor(Math.random() * 20) + 1;
+        const elements = {
+            name: document.getElementById('name'),
+            type: document.getElementById('type'),
+            ac: document.getElementById('ac'),
+            maxHp: document.getElementById('maxHp'),
+            currentHp: document.getElementById('currentHp'),
+            initiative: document.getElementById('initiative'),
+            notes: document.getElementById('notes')
+        };
+
+        // Check if all elements exist
+        for (const [key, element] of Object.entries(elements)) {
+            if (!element) {
+                console.error(`Element not found: ${key}`);
+                return;
+            }
+        }
+
+        elements.name.value = monsterName;
+        elements.type.value = 'enemy';
+        elements.ac.value = monster.ac;
+        elements.maxHp.value = monster.hp;
+        elements.currentHp.value = monster.hp;
+        elements.initiative.value = Math.floor(Math.random() * 20) + 1;
         
         // Populate ability scores
         ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach(ability => {
-            const abilityScore = monster[ability];
-            const abilityMod = Math.floor((abilityScore - 10) / 2);
-            document.getElementById(ability).textContent = `${abilityScore} (${abilityMod >= 0 ? '+' : ''}${abilityMod})`;
+            const abilityElement = document.getElementById(ability);
+            if (abilityElement) {
+                const abilityScore = monster[ability];
+                const abilityMod = Math.floor((abilityScore - 10) / 2);
+                abilityElement.textContent = `${abilityScore} (${abilityMod >= 0 ? '+' : ''}${abilityMod})`;
+            }
         });
 
         // Populate notes with additional information
@@ -780,10 +801,10 @@ function populateMonsterData(monsterName) {
         const actionNotes = monster.actions.map(action => 
             `${action.name}: ${action.entries.join(' ')}`
         ).join('\n');
-        document.getElementById('notes').value = notes + actionNotes;
+        elements.notes.value = notes + actionNotes;
 
-        // Handle monster image
-        updateMonsterImage(monsterName);
+        // Fetch monster image
+        fetchMonsterImage(monsterName);
     } else {
         console.log('Monster not found in bestiary');
         alert('Monster data not found. Please enter details manually.');
@@ -830,30 +851,36 @@ function updateMonsterImage(monsterName) {
     }
 }
 
-        async function fetchMonsterImage(monsterName) {
-            const bookShortcodes = ['MM', 'CoS', 'HotDQ', 'OotA', 'PotA', 'RoT', 'SKT', 'ToA', 'TftYP', 'ToD', 'VGM', 'XGE'];
-            
-            for (const shortcode of bookShortcodes) {
-                const url = `https://5e.tools/img/bestiary/tokens/${shortcode}/${encodeURIComponent(monsterName)}.webp`;
-                if (await checkImageExists(url)) {
-                    monsterImage.src = url;
-                    monsterImage.style.display = 'block';
-                    return;
-                }
-            }
-            
-            console.log('No image found for', monsterName);
-            monsterImage.style.display = 'none';
-        }
+async function fetchMonsterImage(monsterName) {
+    const bookShortcodes = ['MM', 'CoS', 'HotDQ', 'OotA', 'PotA', 'RoT', 'SKT', 'ToA', 'TftYP', 'ToD', 'VGM', 'XGE'];
+    const monsterImage = document.getElementById('monsterImage');
 
-        async function checkImageExists(url) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = url;
-            });
+    if (!monsterImage) {
+        console.error('Monster image element not found');
+        return;
+    }
+
+    for (const shortcode of bookShortcodes) {
+        const url = `https://5e.tools/img/bestiary/tokens/${shortcode}/${encodeURIComponent(monsterName)}.webp`;
+        if (await checkImageExists(url)) {
+            monsterImage.src = url;
+            monsterImage.style.display = 'block';
+            return;
         }
+    }
+
+    console.log('No image found for', monsterName);
+    monsterImage.style.display = 'none';
+}
+
+async function checkImageExists(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+    });
+}
 
         // Character management
         function addCharacter(character) {
