@@ -768,7 +768,7 @@ function populateMonsterData(monsterName) {
             maxHp: document.getElementById('maxHp'),
             currentHp: document.getElementById('currentHp'),
             initiative: document.getElementById('initiative'),
-            notes: document.getElementById('notes')
+            notes: document.getElementById('notes'),
         };
 
         // Check if all elements exist
@@ -851,6 +851,7 @@ function updateMonsterImage(monsterName) {
     }
 }
 
+//the monster data has the original book it was form in this, we should use this instead of mass spamming the server
 async function fetchMonsterImage(monsterName) {
     const bookShortcodes = ['AATM',	'AI','AitFR-ISF','AitFR-THP','AitFR-DN','AitFR-FCD','AWM','BAM','BGDIA','BGG','BMT','CM','CoA','CoS','CRCotN','DC','DIP','DitLCoT','DMG','DoD','DoDk','DoSI','DSotDQ','EGW','ERLW','ESK','FTD','GGR','GHLoE','GoS','GotSF','HAT-TG','HftT','HoL','HotDQ','HWCS','IDRotF','IMR','JttRC','KftGV','KKW','LLK','LMoP','LoX','LR','LRDT','MaBJoV','MCV1SC','MCV2DC','MCV3MC','MCV4EC','MisMV1','MFF','MGELFT','MM','MPMM','MPP','MOT','MTF','NRH-TCMC','NRH-AVitW','NRH-ASS','NRH-CoI','NRH-TLT','NRH-AWoL','NRH-AT','OotA','OoW','PaBTSO','PSA','PSD','PSI','PSK','PSX','PSZ','PHB','PotA','QftIS','RMBRE','RoT','RtG','SADS','SCC','SDW','SKT','SLW','TCE','TDCSR','TTP','TftYP','ToA','ToB1-2023','ToFW','VD','VEoR','VGM','VRGR','XGE','WBtW','WDH','WDMM','XMM','XPHB'];
     const monsterImage = document.getElementById('monsterImage');
@@ -1046,6 +1047,7 @@ rollEnemyInitiativeBtn.addEventListener('click', () => {
                 <p>HP: ${character.currentHp}/${character.maxHp} ${character.tempHp > 0 ? `(+${character.tempHp} temp)` : ''}</p>
                 <p>Initiative: ${character.initiative}</p>
                 <p>Conditions: ${character.conditions.join(', ') || 'None'}</p>
+                <p>Stats: ${abilityElements.join(', ') || 'None'}</p>
                 <p>Concentrating: ${character.concentration ? 'Yes' : 'No'}</p>
                 <p>Notes: ${character.notes || 'None'}</p>
             `;
