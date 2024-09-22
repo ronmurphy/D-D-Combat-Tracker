@@ -728,15 +728,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Monster selection and custom entry
-        monsterSelect.addEventListener('change', function() {
-            if (this.value === 'custom') {
-                customMonsterEntry.style.display = 'block';
-            } else {
-                customMonsterEntry.style.display = 'none';
-                fetchMonsterImage(this.value);
-            }
-        });
+// Update the monsterSelect event listener
+monsterSelect.addEventListener('change', function() {
+    if (this.value === 'custom') {
+        customMonsterEntry.style.display = 'block';
+    } else {
+        customMonsterEntry.style.display = 'none';
+        populateMonsterData(this.value);
+    }
+});
 
         customMonsterName.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -759,7 +759,8 @@ customMonsterName.addEventListener('input', function() {
 function populateMonsterData(monsterName) {
     console.log('Populating data for:', monsterName);
     const monster = compiledBestiary[monsterName];
-    console.log('Monster data:', monster);    if (monster) {
+    console.log('Monster data:', monster);
+    if (monster) {
         document.getElementById('name').value = monsterName;
         document.getElementById('type').value = 'enemy';
         document.getElementById('ac').value = monster.ac;
@@ -781,12 +782,12 @@ function populateMonsterData(monsterName) {
         ).join('\n');
         document.getElementById('notes').value = notes + actionNotes;
 
-        // Update the monster image if you have a function for that
-        // If you don't, you can remove this line
+        // Handle monster image
         updateMonsterImage(monsterName);
     } else {
         console.log('Monster not found in bestiary');
-        alert('Monster data not found. Please enter details manually.');    }
+        alert('Monster data not found. Please enter details manually.');
+    }
 }
 
 // Modify your existing customMonsterName event listener
@@ -804,6 +805,31 @@ customMonsterName.addEventListener('input', function() {
 customMonsterName.addEventListener('change', function() {
     populateMonsterData(this.value);
 });
+
+
+function updateMonsterImage(monsterName) {
+    const bookShortcodes = ['MM', 'CoS', 'HotDQ', 'OotA', 'PotA', 'RoT', 'SKT', 'ToA', 'TftYP', 'ToD', 'VGM', 'XGE'];
+    
+    let imageFound = false;
+    bookShortcodes.forEach(shortcode => {
+        const url = `https://5e.tools/img/bestiary/tokens/${shortcode}/${encodeURIComponent(monsterName)}.webp`;
+        fetch(url)
+            .then(response => {
+                if (response.ok && !imageFound) {
+                    monsterImage.src = url;
+                    monsterImage.style.display = 'block';
+                    imageFound = true;
+                }
+            })
+            .catch(() => {}); // Ignore errors for individual image requests
+    });
+
+    if (!imageFound) {
+        console.log('No image found for', monsterName);
+        monsterImage.style.display = 'none';
+    }
+}
+
         async function fetchMonsterImage(monsterName) {
             const bookShortcodes = ['MM', 'CoS', 'HotDQ', 'OotA', 'PotA', 'RoT', 'SKT', 'ToA', 'TftYP', 'ToD', 'VGM', 'XGE'];
             
@@ -1297,26 +1323,6 @@ nextTurnBtn.addEventListener('click', () => {
             }
         });
 
-        // Add a new function to populate monster data
-        async function populateMonsterData(monsterName) {
-            const monsterData = await fetchMonsterData(monsterName);
-            if (monsterData) {
-                document.getElementById('name').value = monsterData.name;
-                document.getElementById('type').value = monsterData.type;
-                document.getElementById('ac').value = monsterData.ac;
-                document.getElementById('maxHp').value = monsterData.maxHp;
-                document.getElementById('currentHp').value = monsterData.maxHp;
-                document.getElementById('notes').value = monsterData.notes;
-                fetchMonsterImage(monsterName);
-            } else {
-                alert('Monster data not found. Please enter details manually.');
-            }
-        }
-
-        // Modify the custom monster name input event listener
-        customMonsterName.addEventListener('change', async function() {
-            await populateMonsterData(this.value);
-        });
 
     </script>
 </body>
