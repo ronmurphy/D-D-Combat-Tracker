@@ -635,14 +635,18 @@
         const removeAllEnemiesBtn = document.getElementById('removeAllEnemies');
 
 // Load the compiled bestiary when the page loads
+
 document.addEventListener('DOMContentLoaded', function() {
     fetch('assets/bestiary/compiled_bestiary.json')
         .then(response => response.json())
         .then(data => {
             compiledBestiary = data;
-            console.log('Bestiary loaded');
+            console.log('Bestiary loaded', Object.keys(compiledBestiary).length, 'monsters');
         })
-        .catch(error => console.error('Error loading bestiary:', error));
+        .catch(error => {
+            console.error('Error loading bestiary:', error);
+            alert('Failed to load monster data. Some features may not work correctly.');
+        });
 });
 
 
@@ -753,8 +757,9 @@ customMonsterName.addEventListener('input', function() {
 });
 
 function populateMonsterData(monsterName) {
+    console.log('Populating data for:', monsterName);
     const monster = compiledBestiary[monsterName];
-    if (monster) {
+    console.log('Monster data:', monster);    if (monster) {
         document.getElementById('name').value = monsterName;
         document.getElementById('type').value = 'enemy';
         document.getElementById('ac').value = monster.ac;
@@ -772,14 +777,16 @@ function populateMonsterData(monsterName) {
         // Populate notes with additional information
         const notes = `Size: ${monster.size}\nType: ${monster.type}\nAlignment: ${monster.alignment}\nCR: ${monster.cr}\nSpeed: ${monster.speed} ft.\n\nActions:\n`;
         const actionNotes = monster.actions.map(action => 
-            `${action.name}: ${action.entries[0]}`
+            `${action.name}: ${action.entries.join(' ')}`
         ).join('\n');
         document.getElementById('notes').value = notes + actionNotes;
 
-        fetchMonsterImage(monsterName);
+        // Update the monster image if you have a function for that
+        // If you don't, you can remove this line
+        updateMonsterImage(monsterName);
     } else {
-        alert('Monster data not found. Please enter details manually.');
-    }
+        console.log('Monster not found in bestiary');
+        alert('Monster data not found. Please enter details manually.');    }
 }
 
 // Modify your existing customMonsterName event listener
